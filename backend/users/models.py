@@ -1,3 +1,5 @@
+"""Модели приложения users для кастомной модели пользователя и подписок."""
+
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
@@ -47,12 +49,12 @@ class CustomUserManager(UserManager):
 class User(AbstractUser):
     """Кастомная модель пользователя."""
 
-    email = models.EmailField(
+    email: models.EmailField = models.EmailField(
         'Адрес электронной почты',
         max_length=EMAIL_MAX_LENGTH,
         unique=True,
     )
-    avatar = models.ImageField(
+    avatar: models.ImageField = models.ImageField(
         'Аватар',
         upload_to='users/',
         blank=True,
@@ -62,6 +64,8 @@ class User(AbstractUser):
     objects = CustomUserManager()
 
     class Meta:
+        """Метаданные модели пользователя."""
+
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
         ordering = ('username',)
@@ -69,3 +73,36 @@ class User(AbstractUser):
     def __str__(self):
         """Строковое представление пользователя."""
         return self.username
+
+
+class Subscription(models.Model):
+    """Подписка пользователя на автора."""
+
+    user: models.ForeignKey = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name='Подписчик'
+    )
+    author: models.ForeignKey = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribers',
+        verbose_name='Автор'
+    )
+
+    class Meta:
+        """Метаданные модели подписки."""
+
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_subscription'
+            )
+        ]
+
+    def __str__(self):
+        """Строковое представление подписки."""
+        return f'{self.user} подписан на {self.author}'
