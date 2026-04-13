@@ -1,6 +1,7 @@
 """Модели приложения recipes."""
 
 from django.db import models
+from users.models import User
 
 
 MAX_NAME_LENGTH = 32
@@ -63,3 +64,90 @@ class Ingredient(models.Model):
     def __str__(self):
         """Строковое представление ингредиента."""
         return f'{self.name} ({self.measurement_unit})'
+
+
+class Recipe(models.Model):
+    """Модель рецепта."""
+
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='recipes',
+        verbose_name='Автор'
+    )
+    name = models.CharField(
+        'Название',
+        max_length=256
+    )
+    image = models.ImageField(
+        'Картинка',
+        upload_to='recipes/images/'
+    )
+    text = models.TextField(
+        'Описание'
+    )
+    cooking_time = models.PositiveSmallIntegerField(
+        'Время приготовления (мин)',
+    )
+    tags = models.ManyToManyField(
+        'Tag',
+        related_name='recipes',
+        verbose_name='Теги'
+    )
+    ingredients = models.ManyToManyField(
+        'Ingredient',
+        through='RecipeIngredient',
+        related_name='recipes',
+        verbose_name='Ингредиенты'
+    )
+    created_at = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True
+    )
+
+    class Meta:
+        """Метаданные модели рецепта."""
+
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+        ordering = ('-created_at',)
+
+    def __str__(self):
+        """Строковое представление рецепта."""
+        return self.name
+
+
+class RecipeIngredient(models.Model):
+    """Связь рецепта и ингредиента с количеством."""
+
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredients',
+        verbose_name='Рецепт'
+    )
+    ingredient = models.ForeignKey(
+        'Ingredient',
+        on_delete=models.CASCADE,
+        related_name='ingredient_recipes',
+        verbose_name='Ингредиент'
+    )
+    amount = models.PositiveSmallIntegerField(
+        'Количество'
+    )
+
+    class Meta:
+        """Метаданные модели связи рецепта и ингредиента."""
+
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'ingredient'],
+                name='unique_recipe_ingredient'
+            )
+        ]
+
+    def __str__(self):
+        """Строковое представление связи рецепта и ингредиента."""
+        return f'{self.ingredient} — {self.amount}'
