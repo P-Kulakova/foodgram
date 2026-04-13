@@ -1,7 +1,18 @@
-"""Админка для моделей Tag, Ingredient, Recipe."""
+"""
+Админка для моделей.
+
+Tag, Ingredient, Recipe, RecipeIngredient, Favorite, ShoppingCart.
+"""
 
 from django.contrib import admin
-from .models import Tag, Ingredient, Recipe, RecipeIngredient
+from .models import (
+    Tag,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Favorite,
+    ShoppingCart
+)
 
 
 @admin.register(Tag)
@@ -35,3 +46,19 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author__username')
     list_filter = ('tags',)
     inlines = (RecipeIngredientInline,)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    """Админка для модели Favorite."""
+
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user__username', 'recipe__name')
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    """Админка для модели ShoppingCart."""
+
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user__username', 'recipe__name')
