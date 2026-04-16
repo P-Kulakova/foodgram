@@ -10,6 +10,7 @@ from .validators import validate_ingredients, validate_tags
 from users.serializers import CustomUserSerializer
 
 MIN_AMOUNT = 1
+BASE64_EXT_INDEX = -1
 
 
 class Base64ImageField(serializers.ImageField):
@@ -19,7 +20,7 @@ class Base64ImageField(serializers.ImageField):
         """Преобразует base64-строку в файл изображения."""
         if isinstance(data, str) and data.startswith('data:image'):
             format_part, image_str = data.split(';base64,')
-            ext = format_part.split('/')[-1]
+            ext = format_part.split('/')[BASE64_EXT_INDEX]
             data = ContentFile(
                 base64.b64decode(image_str),
                 name=f'recipe.{ext}',
