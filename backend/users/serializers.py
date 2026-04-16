@@ -1,9 +1,9 @@
 """Сериализаторы для модели пользователя и подписок."""
-
-from base64 import b64decode
+import base64
 
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
+
 from rest_framework import serializers
 
 from recipes.models import Recipe
@@ -29,7 +29,7 @@ class Base64ImageField(serializers.ImageField):
             format_part, image_str = data.split(';base64,')
             ext = format_part.split('/')[-1]
             data = ContentFile(
-                b64decode(image_str),
+                base64.b64decode(image_str),
                 name=f'avatar.{ext}',
             )
         return super().to_internal_value(data)
@@ -40,6 +40,7 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Сериализатор для отображения рецептов в подписках."""
+
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
@@ -69,6 +70,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Мета для сериализатора регистрации пользователя."""
+
         model = User
         fields = (
             'email',
@@ -95,6 +97,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Мета для сериализатора пользователя."""
+
         model = User
         fields = (
             'email',
@@ -124,6 +127,7 @@ class AvatarSerializer(serializers.ModelSerializer):
 
     class Meta:
         """Мета для сериализатора аватара пользователя."""
+
         model = User
         fields = ('avatar',)
 
@@ -136,6 +140,7 @@ class SubscriptionUserSerializer(CustomUserSerializer):
 
     class Meta(CustomUserSerializer.Meta):
         """Мета для сериализатора пользователя с рецептами для подписок."""
+
         fields = CustomUserSerializer.Meta.fields + (
             'recipes',
             'recipes_count',
