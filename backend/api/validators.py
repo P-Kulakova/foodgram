@@ -35,7 +35,11 @@ def validate_ingredients(value):
     """Проверяет список ингредиентов."""
     validate_not_empty(value, 'ingredients')
 
-    ingredient_ids = [item['id'].id for item in value]
-    validate_no_duplicates(ingredient_ids, 'ingredients')
+    ingredient_ids = [item['id'] for item in value]
+
+    if len(ingredient_ids) != len(set(ingredient_ids)):
+        raise serializers.ValidationError(
+            'Ингредиенты не должны повторяться.'
+        )
 
     return value

@@ -6,7 +6,7 @@ from django.core.files.base import ContentFile
 
 from rest_framework import serializers
 
-from recipes.models import Recipe
+
 from .models import Subscription
 from .validators import (
     username_validator,
@@ -33,16 +33,6 @@ class Base64ImageField(serializers.ImageField):
                 name=f'avatar.{ext}',
             )
         return super().to_internal_value(data)
-
-
-class RecipeShortSerializer(serializers.ModelSerializer):
-    """Короткий сериализатор рецепта для подписок."""
-
-    class Meta:
-        """Сериализатор для отображения рецептов в подписках."""
-
-        model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
@@ -148,6 +138,7 @@ class SubscriptionUserSerializer(CustomUserSerializer):
 
     def get_recipes(self, obj):
         """Возвращает рецепты автора для подписок."""
+        from api.serializers import RecipeShortSerializer
         request = self.context.get('request')
         recipes = obj.recipes.all()
 

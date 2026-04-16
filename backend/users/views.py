@@ -32,7 +32,7 @@ class UserViewSet(DjoserUserViewSet):
             return SubscriptionUserSerializer
         if self.action == 'avatar':
             return AvatarSerializer
-        if self.action in ('list', 'retrieve', 'current_user'):
+        if self.action in ('list', 'retrieve', 'me'):
             return CustomUserSerializer
         return super().get_serializer_class()
 
@@ -51,10 +51,7 @@ class UserViewSet(DjoserUserViewSet):
     def avatar(self, request):
         """Добавляет, изменяет или удаляет аватар текущего пользователя."""
         if request.method == 'PUT':
-            serializer = self.get_serializer(
-                data=request.data,
-                context=self.get_serializer_context(),
-            )
+            serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             request.user.avatar = serializer.validated_data['avatar']
             request.user.save()
@@ -78,12 +75,12 @@ class UserViewSet(DjoserUserViewSet):
             subscribers__user=request.user,
         ).distinct()
         page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(
-            page,
-            many=True,
-            context=self.get_serializer_context(),
-        )
-        return self.get_paginated_response(serializer.data)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(
         detail=True,
@@ -91,9 +88,9 @@ class UserViewSet(DjoserUserViewSet):
         permission_classes=(IsAuthenticated,),
         url_path='subscribe',
     )
-    def subscribe(self, request, pk=None):
+    def subscribe(self, request, id=None):
         """Подписывает на автора или отменяет подписку."""
-        author = get_object_or_404(User, pk=pk)
+        author = get_object_or_404(User, pk=id)
 
         if request.method == 'POST':
             if request.user == author:
@@ -112,10 +109,7 @@ class UserViewSet(DjoserUserViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            serializer = self.get_serializer(
-                author,
-                context=self.get_serializer_context(),
-            )
+            serializer = self.get_serializer(author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         subscription = Subscription.objects.filter(

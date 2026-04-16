@@ -28,6 +28,16 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
+class RecipeShortSerializer(serializers.ModelSerializer):
+    """Короткий сериализатор рецепта для подписок."""
+
+    class Meta:
+        """Сериализатор для отображения рецептов в подписках."""
+
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class TagSerializer(serializers.ModelSerializer):
     """Сериализатор тегов."""
 
@@ -120,19 +130,16 @@ class IngredientAmountSerializer(serializers.Serializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    """Сериализатор для создания и обновления рецепта."""
+    """Сериализатор рецепта для записи."""
 
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True,
-        validators=[validate_tags],
     )
-    ingredients = IngredientAmountSerializer(
-        many=True,
-        validators=[validate_ingredients],
-    )
+    ingredients = IngredientAmountSerializer(many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
+    cooking_time = serializers.IntegerField(min_value=MIN_AMOUNT)
 
     class Meta:
         """Мета-класс для отображения рецепта."""
@@ -187,12 +194,31 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             instance.recipe_ingredients.all().delete()
             self._create_ingredients(instance, ingredients_data)
 
-        instance.tags.set(tags)
-        instance.recipe_ingredients.all().delete()
-        self._create_ingredients(instance, ingredients_data)
-
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
         """Возвращает рецепт в формате сериализатора чтения."""
         return RecipeSerializer(instance, context=self.context).data
+
+    def validate_tags(self, value):
+        """Проверяет список тегов."""
+        return validate_tags(value)
+
+    def validate_ingredients(self, value):
+        """Проверяет список ингредиентов."""
+        return validate_ingredients(value)
+
+    def validate(self, data):
+        """Проверяет наличие обязательных полей при обновлении рецепта."""
+        request = self.context.get('request')
+
+        if request and request.method in ('PUT', 'PATCH'):
+            if 'ingredients' not in self.initial_data:
+                raise serializers.ValidationError(
+                    {'ingredients': 'Обязательное поле.'}
+                )
+            if 'tags' not in self.initial_data:
+                raise serializers.ValidationError(
+                    {'tags': 'Обязательное поле.'}
+                )
+        return data

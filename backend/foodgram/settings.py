@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-%jp5wi&)bp0&czqbwx398r6)ba!l)=r0f+e)1u+-xs#av^&u5d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -125,6 +125,10 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.LimitPagePagination',
     'PAGE_SIZE': 6,
+
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
 }
 
 DJOSER = {
