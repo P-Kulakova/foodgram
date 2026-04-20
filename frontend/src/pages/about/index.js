@@ -1,11 +1,11 @@
 import { Title, Container, Main } from '../../components'
 import styles from './styles.module.css'
-import MetaTags from 'react-meta-tags'
+import { Helmet } from 'react-helmet'
 
 const About = ({ updateOrders, orders }) => {
   
   return <Main>
-    <MetaTags>
+    <Helmet>
       <title>О проекте</title>
       <meta name="description" content="Фудграм - О проекте" />
       <meta property="og:title" content="О проекте" />

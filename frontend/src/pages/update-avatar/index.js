@@ -3,7 +3,7 @@ import styles from './styles.module.css'
 import { useHistory } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import { AuthContext, UserContext } from '../../contexts'
-import MetaTags from 'react-meta-tags'
+import { Helmet } from 'react-helmet'
 
 const UpdateAvatar = ({
   onAvatarChange
@@ -21,7 +21,7 @@ const UpdateAvatar = ({
 
   return <Main withBG asFlex>
     <Container className={styles.center}>
-      <MetaTags>
+      <Helmet>
         <title>Регистрация</title>
         <meta name="description" content="Фудграм - Редактирование аватара" />
         <meta property="og:title" content="Редактирование аватара" />

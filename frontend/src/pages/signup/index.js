@@ -26,7 +26,7 @@ const SignUp = ({ onSignUp, submitError, setSubmitError }) => {
     <Main withBG asFlex>
       {authContext && <Redirect to="/recipes" />}
       <Container className={styles.center}>
-        <MetaTags>
+        <Helmet>
           <title>Регистрация</title>
           <meta
             name="description"

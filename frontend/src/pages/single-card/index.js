@@ -94,7 +94,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
   return (
     <Main>
       <Container>
-        <MetaTags>
+        <Helmet>
           <title>{name}</title>
           <meta name="description" content={`Фудграм - ${name}`} />
           <meta property="og:title" content={name} />

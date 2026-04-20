@@ -149,7 +149,7 @@ const RecipeEdit = ({ onItemDelete }) => {
   return (
     <Main>
       <Container>
-        <MetaTags>
+        <Helmet>
           <title>Редактирование рецепта</title>
           <meta name="description" content="Фудграм - Редактирование рецепта" />
           <meta property="og:title" content="Редактирование рецепта" />

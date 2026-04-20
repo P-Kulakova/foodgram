@@ -118,7 +118,7 @@ const RecipeCreate = ({ onEdit }) => {
   return (
     <Main>
       <Container>
-        <MetaTags>
+        <Helmet>
           <title>Создание рецепта</title>
           <meta name="description" content="Фудграм - Создание рецепта" />
           <meta property="og:title" content="Создание рецепта" />

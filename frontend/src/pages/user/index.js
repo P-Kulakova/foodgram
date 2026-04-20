@@ -83,7 +83,7 @@ const UserPage = ({ updateOrders }) => {
   return (
     <Main>
       <Container className={styles.container}>
-        <MetaTags>
+        <Helmet>
           <title>
             {user
               ? `${user.first_name} ${user.last_name}`

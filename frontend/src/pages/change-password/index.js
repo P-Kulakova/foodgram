@@ -27,7 +27,7 @@ const ChangePassword = ({ onPasswordChange, submitError, setSubmitError }) => {
   return (
     <Main withBG asFlex>
       <Container className={styles.center}>
-        <MetaTags>
+        <Helmet>
           <title>Изменить пароль</title>
           <meta
             name="description"
