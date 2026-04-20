@@ -11,7 +11,7 @@ import { useFormWithValidation } from "../../utils";
 import { Redirect } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../../contexts";
-import MetaTags from "react-meta-tags";
+import { Helmet } from 'react-helmet';
 
 const SignUp = ({ onSignUp, submitError, setSubmitError }) => {
   const { values, handleChange, errors } = useFormWithValidation();

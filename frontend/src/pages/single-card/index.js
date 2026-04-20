@@ -14,7 +14,7 @@ import Ingredients from "./ingredients";
 import Description from "./description";
 import cn from "classnames";
 import { useRouteMatch, useParams, useHistory } from "react-router-dom";
-import MetaTags from "react-meta-tags";
+import { Helmet } from 'react-helmet';
 import DefaultImage from "../../images/userpic-icon.jpg";
 import { useRecipe } from "../../utils/index.js";
 import api from "../../api";

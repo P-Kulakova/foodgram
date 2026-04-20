@@ -11,7 +11,7 @@ import { useFormWithValidation } from "../../utils";
 import { AuthContext } from "../../contexts";
 import { Redirect } from "react-router-dom";
 import { useContext } from "react";
-import MetaTags from "react-meta-tags";
+import { Helmet } from 'react-helmet';
 import { ChangePasswordText } from "../../components/change-password-text";
 
 const ChangePassword = ({ onPasswordChange, submitError, setSubmitError }) => {

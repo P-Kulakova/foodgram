@@ -16,7 +16,7 @@ import { useEffect, useState, useContext } from "react";
 import api from "../../api";
 import { useParams, useHistory } from "react-router-dom";
 import { AuthContext, UserContext } from "../../contexts";
-import MetaTags from "react-meta-tags";
+import { Helmet } from 'react-helmet';
 import DefaultImage from "../../images/userpic-icon.jpg";
 
 const UserPage = ({ updateOrders }) => {

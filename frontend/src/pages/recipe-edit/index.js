@@ -15,7 +15,7 @@ import api from "../../api";
 import { useEffect, useState } from "react";
 import { useTags } from "../../utils";
 import { useParams, useHistory } from "react-router-dom";
-import MetaTags from "react-meta-tags";
+import { Helmet } from 'react-helmet';
 import { Icons } from "../../components";
 import cn from "classnames";
 
