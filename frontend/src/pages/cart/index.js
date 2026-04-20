@@ -39,7 +39,7 @@ const Cart = ({ updateOrders, orders }) => {
         <title>Список покупок</title>
         <meta name="description" content="Фудграм - Список покупок" />
         <meta property="og:title" content="Список покупок" />
-      </MetaTags>
+      </Helmet>
       <div className={styles.cart}>
         <Title title='Список покупок' />
         <PurchaseList

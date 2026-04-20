@@ -48,7 +48,7 @@ const HomePage = ({ updateOrders }) => {
         <title>Рецепты</title>
         <meta name="description" content="Фудграм - Рецепты" />
         <meta property="og:title" content="Рецепты" />
-      </MetaTags>
+      </Helmet>
       <div className={styles.title}>
         <Title title='Рецепты' />
         <CheckboxGroup

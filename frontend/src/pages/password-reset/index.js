@@ -18,7 +18,7 @@ const ResetPassword = ({ onPasswordReset }) => {
         <title>Войти на сайт</title>
         <meta name="description" content="Фудграм - Сброс пароля" />
         <meta property="og:title" content="Сброс пароля" />
-      </MetaTags>
+      </Helmet>
       <Form
         className={styles.form}
         onSubmit={e => {

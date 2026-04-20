@@ -153,7 +153,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           <title>Редактирование рецепта</title>
           <meta name="description" content="Фудграм - Редактирование рецепта" />
           <meta property="og:title" content="Редактирование рецепта" />
-        </MetaTags>
+        </Helmet>
         <Title title="Редактирование рецепта" />
         <Form
           className={styles.form}

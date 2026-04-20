@@ -25,7 +25,7 @@ const UpdateAvatar = ({
         <title>Регистрация</title>
         <meta name="description" content="Фудграм - Редактирование аватара" />
         <meta property="og:title" content="Редактирование аватара" />
-      </MetaTags>
+      </Helmet>
       <Form
         className={styles.form}
         onSubmit={e => {

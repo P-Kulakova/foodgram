@@ -33,7 +33,7 @@ const SignUp = ({ onSignUp, submitError, setSubmitError }) => {
             content="Фудграм - Регистрация"
           />
           <meta property="og:title" content="Регистрация" />
-        </MetaTags>
+        </Helmet>
         <Form
           className={styles.form}
           onSubmit={(e) => {

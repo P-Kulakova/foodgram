@@ -122,7 +122,7 @@ const RecipeCreate = ({ onEdit }) => {
           <title>Создание рецепта</title>
           <meta name="description" content="Фудграм - Создание рецепта" />
           <meta property="og:title" content="Создание рецепта" />
-        </MetaTags>
+        </Helmet>
         <Title title="Создание рецепта" />
         <Form
           className={styles.form}

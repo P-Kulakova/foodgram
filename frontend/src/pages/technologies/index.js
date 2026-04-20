@@ -9,7 +9,7 @@ const Technologies = () => {
       <title>О проекте</title>
       <meta name="description" content="Фудграм - Технологии" />
       <meta property="og:title" content="О проекте" />
-    </MetaTags>
+    </Helmet>
     
     <Container>
       <h1 className={styles.title}>Технологии</h1>

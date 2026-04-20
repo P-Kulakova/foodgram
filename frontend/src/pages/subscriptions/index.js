@@ -35,7 +35,7 @@ const SubscriptionsPage = () => {
         <title>Мои подписки</title>
         <meta name="description" content="Фудграм - Мои подписки" />
         <meta property="og:title" content="Мои подписки" />
-      </MetaTags>
+      </Helmet>
       <Title
         title='Мои подписки'
       />

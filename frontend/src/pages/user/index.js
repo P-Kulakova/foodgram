@@ -105,7 +105,7 @@ const UserPage = ({ updateOrders }) => {
                 : "Страница пользователя"
             }
           />
-        </MetaTags>
+        </Helmet>
         <div className={styles.title}>
           <div className={styles.titleTextBox}>
             <div className={styles.user}>

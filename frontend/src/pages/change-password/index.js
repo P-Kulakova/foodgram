@@ -34,7 +34,7 @@ const ChangePassword = ({ onPasswordChange, submitError, setSubmitError }) => {
             content="Фудграм - Изменить пароль"
           />
           <meta property="og:title" content="Изменить пароль" />
-        </MetaTags>
+        </Helmet>
         <Form
           className={styles.form}
           onSubmit={(e) => {

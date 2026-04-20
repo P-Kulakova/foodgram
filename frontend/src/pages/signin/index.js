@@ -33,7 +33,7 @@ const SignIn = ({ onSignIn, submitError, setSubmitError }) => {
             content="Фудграм - Войти на сайт"
           />
           <meta property="og:title" content="Войти на сайт" />
-        </MetaTags>
+        </Helmet>
         <Form
           className={styles.form}
           onSubmit={(e) => {

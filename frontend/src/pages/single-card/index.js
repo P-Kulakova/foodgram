@@ -98,7 +98,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           <title>{name}</title>
           <meta name="description" content={`Фудграм - ${name}`} />
           <meta property="og:title" content={name} />
-        </MetaTags>
+        </Helmet>
         <div className={styles["single-card"]}>
           <img
             src={image}
