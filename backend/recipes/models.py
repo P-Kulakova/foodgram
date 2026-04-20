@@ -3,7 +3,6 @@
 from django.db import models
 from users.models import User
 
-
 MAX_NAME_LENGTH = 32
 MAX_SLUG_LENGTH = 32
 MAX_INGREDIENT_NAME_LENGTH = 128
@@ -170,6 +169,8 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        """Метаданные модели избранного."""
+
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
         constraints = [
@@ -180,8 +181,9 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
+        """Строковое представление избранного."""
         return f'{self.user} добавил {self.recipe}'
-    
+
 
 class ShoppingCart(models.Model):
     """Модель списка покупок."""
@@ -200,6 +202,8 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        """Метаданные модели списка покупок."""
+
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
         constraints = [
@@ -210,4 +214,5 @@ class ShoppingCart(models.Model):
         ]
 
     def __str__(self):
+        """Строковое представление списка покупок."""
         return f'{self.user} добавил {self.recipe} в покупки'

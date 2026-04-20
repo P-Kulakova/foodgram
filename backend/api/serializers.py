@@ -2,12 +2,12 @@
 
 import base64
 
-from rest_framework import serializers
 from django.core.files.base import ContentFile
 from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from rest_framework import serializers
+from users.serializers import CustomUserSerializer
 
 from .validators import validate_ingredients, validate_tags
-from users.serializers import CustomUserSerializer
 
 MIN_AMOUNT = 1
 BASE64_EXT_INDEX = -1

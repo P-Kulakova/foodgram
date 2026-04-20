@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator
 from rest_framework.validators import UniqueValidator
 
-
 User = get_user_model()
 
 USERS_QUERYSET = User.objects.all()

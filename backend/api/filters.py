@@ -1,8 +1,7 @@
 """Фильтры для рецептов, ингредиентов и тегов."""
 
-from recipes.models import Recipe, Tag
 import django_filters
-
+from recipes.models import Recipe, Tag
 
 FILTER_ENABLED = 1
 FILTER_DISABLED = 0
