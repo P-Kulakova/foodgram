@@ -21,7 +21,7 @@ class User(AbstractUser):
         null=True,
     )
 
-    REQUIRED_FIELDS = ['email',]
+    REQUIRED_FIELDS = ['email']
 
     class Meta:
         """Метаданные модели пользователя."""
