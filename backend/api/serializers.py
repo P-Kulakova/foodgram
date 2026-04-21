@@ -209,10 +209,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         return validate_ingredients(value)
 
     def validate(self, data):
-        """Проверяет наличие обязательных полей при обновлении рецепта."""
+        """Проверяет наличие обязательных полей при полном обновлении."""
         request = self.context.get('request')
 
-        if request and request.method in ('PUT', 'PATCH'):
+        if request and request.method == 'PUT':
             if 'ingredients' not in self.initial_data:
                 raise serializers.ValidationError(
                     {'ingredients': 'Обязательное поле.'}
@@ -221,4 +221,5 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {'tags': 'Обязательное поле.'}
                 )
+
         return data

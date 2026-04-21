@@ -1,3 +1,5 @@
+"""Django settings для проекта Foodgram."""
+
 import os
 from pathlib import Path
 
@@ -9,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%jp5wi&)bp0&czqbwx398r6)ba!l)=r0f+e)1u+-xs#av^&u5d'
+SECRET_KEY =  os.getenv('SECRET_KEY', 'dev-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -154,4 +156,4 @@ CSRF_TRUSTED_ORIGINS = [
     'https://foodgraam.servebeer.com',
 ]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-ECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

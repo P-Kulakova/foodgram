@@ -11,8 +11,10 @@ class RecipeFilter(django_filters.FilterSet):
     """Фильтры для рецептов."""
 
     author = django_filters.NumberFilter(field_name='author__id')
-    is_favorited = django_filters.NumberFilter(method='filter_is_favorited')
-    is_in_shopping_cart = django_filters.NumberFilter(
+    is_favorited = django_filters.BooleanFilter(
+        method='filter_is_favorited'
+    )
+    is_in_shopping_cart = django_filters.BooleanFilter(
         method='filter_is_in_shopping_cart'
     )
     tags = django_filters.ModelMultipleChoiceFilter(
@@ -27,40 +29,32 @@ class RecipeFilter(django_filters.FilterSet):
         model = Recipe
         fields = ('author', 'tags')
 
+    def _filter_by_user_relationship(
+        self, queryset, value, relationship_field
+    ):
+        """Фильтрует рецепты по отношению пользователя к рецепту."""
+        if self.request is None:
+            return queryset
+
+        user = self.request.user
+        if not user.is_authenticated:
+            return (
+                queryset.none() if value == FILTER_ENABLED else queryset
+            )
+
+        filter_field = f'{relationship_field}__user'
+        if value == FILTER_ENABLED:
+            return queryset.filter(**{filter_field: user}).distinct()
+        if value == FILTER_DISABLED:
+            return queryset.exclude(**{filter_field: user}).distinct()
+        return queryset
+
     def filter_is_favorited(self, queryset, name, value):
         """Фильтрует рецепты по избранному текущего пользователя."""
-        request = self.request
-        if request is None:
-            return queryset
-
-        user = request.user
-        if not user.is_authenticated:
-            if value == FILTER_ENABLED:
-                return queryset.none()
-            return queryset
-
-        if value == FILTER_ENABLED:
-            return queryset.filter(favorites__user=user).distinct()
-        if value == FILTER_DISABLED:
-            return queryset.exclude(favorites__user=user).distinct()
-
-        return queryset
+        return self._filter_by_user_relationship(queryset, value, 'favorites')
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         """Фильтрует рецепты по списку покупок текущего пользователя."""
-        request = self.request
-        if request is None:
-            return queryset
-
-        user = request.user
-        if not user.is_authenticated:
-            if value == FILTER_ENABLED:
-                return queryset.none()
-            return queryset
-
-        if value == FILTER_ENABLED:
-            return queryset.filter(shopping_cart__user=user).distinct()
-        if value == FILTER_DISABLED:
-            return queryset.exclude(shopping_cart__user=user).distinct()
-
-        return queryset
+        return self._filter_by_user_relationship(
+            queryset, value, 'shopping_cart'
+        )
