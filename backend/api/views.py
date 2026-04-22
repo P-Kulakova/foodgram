@@ -135,7 +135,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         recipe_ingredients = Recipe.objects.filter(
             shopping_cart__user=request.user
-        ).prefetch_related('recipe_ingredients__ingredient')
+        ).distinct().prefetch_related('recipe_ingredients__ingredient')
 
         for recipe in recipe_ingredients:
             for item in recipe.recipe_ingredients.all():
@@ -166,11 +166,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path='get-link',
     )
     def get_link(self, request, pk=None):
-        """Возвращает ссылку на рецепт."""
+        """Получает короткую ссылку на рецепт."""
         recipe = get_object_or_404(Recipe, pk=pk)
-        short_link = request.build_absolute_uri(f'/recipes/{recipe.id}/')
 
-        return Response(
-            {'short-link': short_link},
-            status=status.HTTP_200_OK,
-        )
+        short_link = request.build_absolute_uri(f'/r/{recipe.id}/')
+
+        return Response({'short-link': short_link})
