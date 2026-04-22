@@ -6,7 +6,7 @@ Foodgram — сервис для публикации рецептов. Поль
 
 ## Технологии
 
-- Python 3
+- Python
 - Django
 - Django REST Framework
 - Djoser
