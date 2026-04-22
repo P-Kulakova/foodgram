@@ -169,6 +169,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Получает короткую ссылку на рецепт."""
         recipe = get_object_or_404(Recipe, pk=pk)
 
-        short_link = request.build_absolute_uri(f'/r/{recipe.id}/')
+        short_link = request.build_absolute_uri(f'/r/{recipe.id}')
 
-        return Response({'short-link': short_link})
+        return Response(
+            {'short-link': short_link},
+            status=status.HTTP_200_OK,
+        )
