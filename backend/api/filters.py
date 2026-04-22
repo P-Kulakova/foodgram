@@ -1,16 +1,30 @@
 """Фильтры для рецептов, ингредиентов и тегов."""
 
 import django_filters
-from recipes.models import Recipe, Tag
 
-FILTER_ENABLED = 1
-FILTER_DISABLED = 0
+from recipes.models import Ingredient, Recipe, Tag
+
+from .const import FILTER_DISABLED, FILTER_ENABLED
+
+
+class IngredientFilter(django_filters.FilterSet):
+    """Фильтры для ингредиентов."""
+
+    name = django_filters.CharFilter(
+        field_name='name',
+        lookup_expr='istartswith',
+    )
+
+    class Meta:
+        """Метаданные фильтра ингредиентов."""
+
+        model = Ingredient
+        fields = ('name',)
 
 
 class RecipeFilter(django_filters.FilterSet):
     """Фильтры для рецептов."""
 
-    author = django_filters.NumberFilter(field_name='author__id')
     is_favorited = django_filters.BooleanFilter(
         method='filter_is_favorited'
     )

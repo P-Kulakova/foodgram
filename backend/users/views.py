@@ -1,12 +1,14 @@
 """Представления для пользователей."""
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+
 from users.models import Subscription
 from users.serializers import (AvatarSerializer, CustomUserCreateSerializer,
                                CustomUserSerializer,
@@ -44,6 +46,7 @@ class UserViewSet(DjoserUserViewSet):
         permission_classes=(IsAuthenticated,),
         url_path='me/avatar',
     )
+    @transaction.atomic
     def avatar(self, request):
         """Добавляет, изменяет или удаляет аватар текущего пользователя."""
         if request.method == 'PUT':
@@ -84,6 +87,7 @@ class UserViewSet(DjoserUserViewSet):
         permission_classes=(IsAuthenticated,),
         url_path='subscribe',
     )
+    @transaction.atomic
     def subscribe(self, request, id=None):
         """Подписывает на автора или отменяет подписку."""
         author = get_object_or_404(User, pk=id)

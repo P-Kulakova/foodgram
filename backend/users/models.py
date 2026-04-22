@@ -3,7 +3,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-EMAIL_MAX_LENGTH = 254
+from .const import EMAIL_MAX_LENGTH
 
 
 class User(AbstractUser):

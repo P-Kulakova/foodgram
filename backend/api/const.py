@@ -1,0 +1,6 @@
+"""Константы приложения api."""
+
+FILTER_DISABLED = 0
+FILTER_ENABLED = 1
+MIN_AMOUNT = 1
+SHOPPING_CART_LINE_START = 1

@@ -1,31 +1,14 @@
 """Сериализаторы для API."""
 
-import base64
-
-from django.core.files.base import ContentFile
-from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from django.db import transaction
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+
+from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
 from users.serializers import CustomUserSerializer
 
+from .const import MIN_AMOUNT
 from .validators import validate_ingredients, validate_tags
-
-MIN_AMOUNT = 1
-BASE64_EXT_INDEX = -1
-
-
-class Base64ImageField(serializers.ImageField):
-    """Поле для загрузки изображения в формате base64."""
-
-    def to_internal_value(self, data):
-        """Преобразует base64-строку в файл изображения."""
-        if isinstance(data, str) and data.startswith('data:image'):
-            format_part, image_str = data.split(';base64,')
-            ext = format_part.split('/')[BASE64_EXT_INDEX]
-            data = ContentFile(
-                base64.b64decode(image_str),
-                name=f'recipe.{ext}',
-            )
-        return super().to_internal_value(data)
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
@@ -169,6 +152,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             ]
         )
 
+    @transaction.atomic
     def create(self, validated_data):
         """Создаёт рецепт."""
         tags = validated_data.pop('tags')
@@ -182,6 +166,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         self._create_ingredients(recipe, ingredients_data)
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         """Обновляет рецепт."""
         tags = validated_data.pop('tags', None)

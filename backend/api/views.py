@@ -1,22 +1,23 @@
 """Представления API приложения."""
 
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+
+from .const import SHOPPING_CART_LINE_START
+from .filters import IngredientFilter, RecipeFilter
 from .pagination import LimitPagePagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer, RecipeSerializer,
                           RecipeShortSerializer, RecipeWriteSerializer,
                           TagSerializer)
-
-SHOPPING_CART_LINE_START = 1
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -30,16 +31,10 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet для ингредиентов."""
 
+    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-
-    def get_queryset(self):
-        """Возвращает queryset ингредиентов с фильтрацией по имени."""
-        queryset = Ingredient.objects.all()
-        name = self.request.GET.get('name')
-        if name:
-            queryset = queryset.filter(name__istartswith=name)
-        return queryset
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -131,23 +126,28 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """Скачивает список покупок."""
-        ingredients = {}
-
-        recipe_ingredients = Recipe.objects.filter(
+        ingredients = Recipe.objects.filter(
             shopping_cart__user=request.user
-        ).distinct().prefetch_related('recipe_ingredients__ingredient')
-
-        for recipe in recipe_ingredients:
-            for item in recipe.recipe_ingredients.all():
-                ingredient = item.ingredient
-                key = (ingredient.name, ingredient.measurement_unit)
-                ingredients[key] = ingredients.get(key, 0) + item.amount
+        ).values(
+            'recipe_ingredients__ingredient__name',
+            'recipe_ingredients__ingredient__measurement_unit',
+        ).annotate(
+            total_amount=Sum('recipe_ingredients__amount')
+        ).order_by(
+            'recipe_ingredients__ingredient__name',
+            'recipe_ingredients__ingredient__measurement_unit',
+        )
 
         lines = ['Список покупок:\n']
-        for index, ((name, unit), amount) in enumerate(
-            ingredients.items(),
+        for index, ingredient in enumerate(
+            ingredients,
             start=SHOPPING_CART_LINE_START,
         ):
+            name = ingredient['recipe_ingredients__ingredient__name']
+            unit = ingredient[
+                'recipe_ingredients__ingredient__measurement_unit'
+            ]
+            amount = ingredient['total_amount']
             lines.append(f'{index}. {name} — {amount} {unit}\n')
 
         response = HttpResponse(

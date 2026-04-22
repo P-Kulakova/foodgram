@@ -1,12 +1,11 @@
 """Модели приложения recipes."""
 
 from django.db import models
+
 from users.models import User
 
-MAX_NAME_LENGTH = 32
-MAX_SLUG_LENGTH = 32
-MAX_INGREDIENT_NAME_LENGTH = 128
-MAX_MEASUREMENT_UNIT_LENGTH = 64
+from .const import (MAX_INGREDIENT_NAME_LENGTH, MAX_MEASUREMENT_UNIT_LENGTH,
+                    MAX_NAME_LENGTH, MAX_SLUG_LENGTH)
 
 
 class Tag(models.Model):

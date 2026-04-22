@@ -1,33 +1,12 @@
 """Сериализаторы для модели пользователя и подписок."""
-import base64
 
-from django.contrib.auth import get_user_model
-from django.core.files.base import ContentFile
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import Subscription
+from .const import EMAIL_MAX_LENGTH, USER_FIELDS_MAX_LENGTH
+from .models import Subscription, User
 from .validators import (unique_email_validator, unique_username_validator,
                          username_validator)
-
-User = get_user_model()
-
-MAX_LENGTH = 150
-MAX_EMAIL_LENGTH = 254
-
-
-class Base64ImageField(serializers.ImageField):
-    """Поле для загрузки изображения в формате base64."""
-
-    def to_internal_value(self, data):
-        """Преобразует base64-строку в файл изображения."""
-        if isinstance(data, str) and data.startswith('data:image'):
-            format_part, image_str = data.split(';base64,')
-            ext = format_part.split('/')[-1]
-            data = ContentFile(
-                base64.b64decode(image_str),
-                name=f'avatar.{ext}',
-            )
-        return super().to_internal_value(data)
 
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
@@ -35,20 +14,20 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
 
     first_name = serializers.CharField(
         required=True,
-        max_length=MAX_LENGTH,
+        max_length=USER_FIELDS_MAX_LENGTH,
     )
     last_name = serializers.CharField(
         required=True,
-        max_length=MAX_LENGTH,
+        max_length=USER_FIELDS_MAX_LENGTH,
     )
     email = serializers.EmailField(
         required=True,
-        max_length=MAX_EMAIL_LENGTH,
+        max_length=EMAIL_MAX_LENGTH,
         validators=[unique_email_validator],
     )
     username = serializers.CharField(
         required=True,
-        max_length=MAX_LENGTH,
+        max_length=USER_FIELDS_MAX_LENGTH,
         validators=[username_validator, unique_username_validator],
     )
     password = serializers.CharField(write_only=True)
