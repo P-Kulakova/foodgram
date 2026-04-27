@@ -1,5 +1,6 @@
 """Сериализаторы для модели пользователя и подписок."""
 
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -45,6 +46,7 @@ class CustomUserCreateSerializer(serializers.ModelSerializer):
             'password',
         )
 
+    @transaction.atomic
     def create(self, validated_data):
         """Создаёт пользователя с хешированием пароля."""
         password = validated_data.pop('password')
@@ -103,7 +105,7 @@ class SubscriptionUserSerializer(CustomUserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     class Meta(CustomUserSerializer.Meta):
-        """Мета для сериализатора пользователя с рецептами для подписок."""
+        """Мета для сериализатора пользователя с рецептами."""
 
         fields = CustomUserSerializer.Meta.fields + (
             'recipes',

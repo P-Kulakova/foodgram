@@ -1,6 +1,6 @@
 """Представления API приложения."""
 
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -129,13 +129,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = Recipe.objects.filter(
             shopping_cart__user=request.user
         ).values(
-            'recipe_ingredients__ingredient__name',
-            'recipe_ingredients__ingredient__measurement_unit',
+            name=F('recipe_ingredients__ingredient__name'),
+            measurement_unit=F(
+                'recipe_ingredients__ingredient__measurement_unit'
+            ),
         ).annotate(
             total_amount=Sum('recipe_ingredients__amount')
         ).order_by(
-            'recipe_ingredients__ingredient__name',
-            'recipe_ingredients__ingredient__measurement_unit',
+            'name',
+            'measurement_unit',
         )
 
         lines = ['Список покупок:\n']
@@ -143,10 +145,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredients,
             start=SHOPPING_CART_LINE_START,
         ):
-            name = ingredient['recipe_ingredients__ingredient__name']
-            unit = ingredient[
-                'recipe_ingredients__ingredient__measurement_unit'
-            ]
+            name = ingredient['name']
+            unit = ingredient['measurement_unit']
             amount = ingredient['total_amount']
             lines.append(f'{index}. {name} — {amount} {unit}\n')
 
