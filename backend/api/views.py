@@ -1,6 +1,6 @@
 """Представления API приложения."""
 
-from django.db.models import Sum
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -130,13 +130,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = RecipeIngredient.objects.filter(
             recipe__shopping_cart__user=request.user
         ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit',
+            name=F('ingredient__name'),
+            measurement_unit=F('ingredient__measurement_unit'),
         ).annotate(
             total_amount=Sum('amount')
         ).order_by(
-            'ingredient__name',
-            'ingredient__measurement_unit',
+            'name',
+            'measurement_unit',
         )
 
         lines = ['Список покупок:\n']
@@ -144,14 +144,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredients,
             start=SHOPPING_CART_LINE_START,
         ):
-            name = ingredient['ingredient__name']
-            unit = ingredient['ingredient__measurement_unit']
+            name = ingredient['name']
+            unit = ingredient['measurement_unit']
             amount = ingredient['total_amount']
             lines.append(f'{index}. {name} — {amount} {unit}\n')
 
         response = HttpResponse(
             ''.join(lines),
-            content_type='text/plain',
+            content_type='text/plain; charset=utf-8',
         )
         response['Content-Disposition'] = (
             'attachment; filename="shopping_cart.txt"'
@@ -168,7 +168,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Получает короткую ссылку на рецепт."""
         recipe = get_object_or_404(Recipe, pk=pk)
 
-        short_link = request.build_absolute_uri(f'/s/{recipe.id}')
+        short_link = request.build_absolute_uri(f'/s/{recipe.id/}')
 
         return Response(
             {'short-link': short_link},
