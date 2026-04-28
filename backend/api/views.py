@@ -1,6 +1,6 @@
 """Представления API приложения."""
 
-from django.db.models import F, Sum
+from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -9,7 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 
 from .const import SHOPPING_CART_LINE_START
 from .filters import IngredientFilter, RecipeFilter
@@ -126,18 +127,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def download_shopping_cart(self, request):
         """Скачивает список покупок."""
-        ingredients = Recipe.objects.filter(
-            shopping_cart__user=request.user
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__shopping_cart__user=request.user
         ).values(
-            name=F('recipe_ingredients__ingredient__name'),
-            measurement_unit=F(
-                'recipe_ingredients__ingredient__measurement_unit'
-            ),
+            'ingredient__name',
+            'ingredient__measurement_unit',
         ).annotate(
-            total_amount=Sum('recipe_ingredients__amount')
+            total_amount=Sum('amount')
         ).order_by(
-            'name',
-            'measurement_unit',
+            'ingredient__name',
+            'ingredient__measurement_unit',
         )
 
         lines = ['Список покупок:\n']
@@ -145,8 +144,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredients,
             start=SHOPPING_CART_LINE_START,
         ):
-            name = ingredient['name']
-            unit = ingredient['measurement_unit']
+            name = ingredient['ingredient__name']
+            unit = ingredient['ingredient__measurement_unit']
             amount = ingredient['total_amount']
             lines.append(f'{index}. {name} — {amount} {unit}\n')
 
@@ -169,7 +168,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Получает короткую ссылку на рецепт."""
         recipe = get_object_or_404(Recipe, pk=pk)
 
-        short_link = request.build_absolute_uri(f'/r/{recipe.id}')
+        short_link = request.build_absolute_uri(f'/s/{recipe.id}')
 
         return Response(
             {'short-link': short_link},
